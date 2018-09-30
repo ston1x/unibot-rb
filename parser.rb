@@ -20,22 +20,39 @@ module Parser
     classes = []
 
     response.each do |lesson|
-      classes << lesson if lesson["weekday"] == day && !(lesson["name"].empty?)
+      next if lesson["name"].empty?
+      classes << lesson if lesson["day"] == day
     end
-    
-    format_schedule_today(classes, day)
+
+    return "Пар нет, но лучше проверьте в источнике" if classes.empty? 
+    format_schedule(classes, day)
   end
 
-  def format_schedule_today(classes, day)
+  def format_schedule(classes, day)
     day_ru = @@days_ru[day.to_sym]
     schedule = "#{day_ru}\n"
-    today_classes = classes.each do |lesson|
-      schedule << "#{lesson['index']}) #{lesson['time']} #{lesson['name']} - кабинет #{lesson['room']}, преподаватель #{lesson['teacher']}\n"
+    today_classes = classes.each_with_index do |lesson, index|
+      time_start = lesson["time_start"]
+      time_end = lesson["time_end"]
+      name = lesson["name"]
+      room = lesson["room"]
+      teacher = lesson["teacher"]
+      schedule << "#{index + 1}) #{time_start}-#{time_end} #{name} - кабинет #{room}, преподаватель #{teacher}\n"
     end
     schedule
   end
 
   def weekend?
-    %w[saturday sunday].include? Date.today.strftime("%A").downcase
+    %w[sunday].include? Date.today.strftime("%A").downcase
   end
+
+  def identify_teacher
+
+  end
+
+  def classes_exist?
+    
+  end
+
 end
+

@@ -18,7 +18,8 @@ Telegram::Bot::Client.run(token) do |bot|
     case message.text
     when "/schedule"
       puts "/schedule"
-      parse_schedule(url)
+      schedule_json = parse_schedule(url)
+      puts schedule_json
 
       bot.api.send_message(
         chat_id: message.chat.id,
@@ -39,6 +40,18 @@ Telegram::Bot::Client.run(token) do |bot|
         parse_mode: "Markdown",
         text: schedule
       )
+
+    when "/tomorrow"
+      puts "/tomorrow"
+      schedule = prepare_schedule((Date.today + 1).strftime("%A").downcase)
+
+      bot.api.send_message(
+        chat_id: message.chat.id,
+        parse_mode: "Markdown",
+        text: schedule
+      )
+
+
     when "/monday"
       puts "/monday"
       schedule = prepare_schedule("monday")
@@ -62,6 +75,7 @@ Telegram::Bot::Client.run(token) do |bot|
     when "/wednesday"
       puts "/wednesday"
       schedule = prepare_schedule("wednesday")
+      puts "[TEST] #{schedule}"
 
       bot.api.send_message(
         chat_id: message.chat.id,
